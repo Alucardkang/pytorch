@@ -1340,6 +1340,12 @@ class TestScript(TestCase):
 
         inputs = self._make_scalar_vars([0], torch.int64)
 
+        # graph = test_script_for_in_range_ast.graph
+        # print(graph)
+        # torch._C._jit_pass_unroll_loops(graph)
+        # print(graph)
+
+        print(test_script_for_in_range_ast(*inputs).item())
         self.assertEqual(test_script_for_in_range_ast(*inputs), 161700)
 
     def test_script_bool_constant(self):

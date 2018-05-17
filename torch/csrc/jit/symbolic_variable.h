@@ -79,6 +79,18 @@ struct SymbolicVariable {
   SymbolicVariable operator-() const {
     return create(aten::neg, {*this})[0].typeLike(*this);
   }
+  SymbolicVariable operator/(at::Scalar rhs) const {
+    Node *n;
+    auto r = create(aten::div, {*this}, 1, &n)[0].typeLike(*this);
+    n->t_(attr::other, rhs.toTensor());
+    return r;
+  }
+  SymbolicVariable operator%(at::Scalar rhs) const {
+    Node *n;
+    auto r = create(aten::remainder, {*this}, 1, &n)[0].typeLike(*this);
+    n->t_(attr::other, rhs.toTensor());
+    return r;
+  }
   SymbolicVariable mm(const SymbolicVariable rhs) const {
     auto r = create(t("mm"), {*this, rhs})[0];
     return r;

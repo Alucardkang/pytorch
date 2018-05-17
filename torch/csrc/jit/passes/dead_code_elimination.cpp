@@ -2,11 +2,18 @@
 
 namespace torch { namespace jit {
 
+bool hasSideEffects(Node * node) {
+  return node->kind() == prim::Print ||
+         node->kind() == prim::PythonOp ||
+         node->kind() == prim::CppOp ||
+         std::any_of(node->blocks().begin(), node->blocks().end(),
+                     [](Block *b) {
+                       return std::any_of(b->nodes().begin(), b->nodes().end(), hasSideEffects);
+                     });
+}
+
 void EliminateDeadCode(std::shared_ptr<Graph>& graph) {
   EliminateDeadCode(graph->block());
-}
-bool hasSideEffects(Node * node) {
-  return node->kind() == prim::Print || node->blocks().size() > 0;
 }
 
 void EliminateDeadCode(Block *block) {
@@ -20,4 +27,4 @@ void EliminateDeadCode(Block *block) {
   }
 }
 
-}}
+}} // namespace torch::jit
